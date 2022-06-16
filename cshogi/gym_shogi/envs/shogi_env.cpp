@@ -1,1 +1,0 @@
-#include "shogi_env.h"
