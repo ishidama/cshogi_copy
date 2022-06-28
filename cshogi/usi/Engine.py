@@ -202,3 +202,23 @@ class Engine:
             pass
         self.proc.wait()
         self.proc = None
+
+    def eval(self, listener=None):
+        if self.debug:
+            listener = print
+        cmd = "eval"
+        if listener:
+            listener(cmd)
+        self.proc.stdin.write(cmd.encode("ascii") + b"\n")
+        self.proc.stdin.flush()
+
+        while True:
+            self.proc.stdout.flush()
+            line = self.proc.stdout.readline()
+            if line == "":
+                raise EOFError()
+            line = line.strip().decode("shift-jis")
+            if listener:
+                listener(line)
+            if line[0:6] == "eval =":
+                return line.split(" ")[2]
